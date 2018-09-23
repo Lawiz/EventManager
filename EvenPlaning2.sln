@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvenPlaning2", "EvenPlaning2\EvenPlaning2.csproj", "{D9D5F184-072A-47CF-895F-AD3C579A800C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9D5F184-072A-47CF-895F-AD3C579A800C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9D5F184-072A-47CF-895F-AD3C579A800C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9D5F184-072A-47CF-895F-AD3C579A800C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9D5F184-072A-47CF-895F-AD3C579A800C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FE65B289-FECA-4902-89D2-9EBF832D9D91}
+	EndGlobalSection
+EndGlobal

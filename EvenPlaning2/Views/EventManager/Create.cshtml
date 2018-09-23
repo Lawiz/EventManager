@@ -1,0 +1,103 @@
+﻿@model EvenPlaning2.Data.DataModels.EventModel
+@using System;
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<h4>EventModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MainTheme" class="control-label"></label>
+                <input asp-for="MainTheme" class="form-control" />
+                <span asp-validation-for="MainTheme" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group">
+                <label asp-for="EventInfo.Location" class="control-label"></label>
+                <input asp-for="EventInfo.Location" class="form-control" />
+                <span asp-validation-for="EventInfo.Location" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventInfo.DateEvent" class="control-label"></label>
+                <input asp-for="EventInfo.DateEvent" class="form-control" />
+                <span asp-validation-for="EventInfo.DateEvent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventInfo.DressCode" class="control-label"></label>
+                <input asp-for="EventInfo.DressCode" class="form-control" />
+                <span asp-validation-for="EventInfo.DressCode" class="text-danger"></span>
+            </div>
+            <hr />
+            <div id="SubThem">
+                @{Guid guid=Guid.NewGuid(); }
+                <div class="form-group" id="@guid.ToString("N")">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-6">
+                            <label asp-for="SubThems" class="control-label"></label>
+                            <input asp-for="SubThems" class="form-control" />
+                            <span asp-validation-for="SubThems" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 col-lg-6">
+                            <input  type="button"
+                                   class="form-control" value="Delete Sub-Theme" onclick="Delete(@guid.ToString("N"))" />
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div >
+                    <input id="addButton" type="button"
+                           class="form-control" value="Add Sub-Theme"  />
+                </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function Delete(id) {
+
+        var element = document.getElementById(id);
+        document.remove(element);
+    }
+    document.getElementById('addButton').onclick = function () {
+        var form = document.getElementById('SubThem');
+
+        var div = document.createElement('div');
+        div.className = "form-group";
+        div.id ="@Guid.NewGuid().ToString("N")";
+            div.innerHTML = `<div class="row">
+                        <div class="col-md-6 col-lg-6">
+                            <label asp-for="SubThems" class="control-label"></label>
+                            <input asp-for="SubThems" class="form-control" />
+                            <span asp-validation-for="SubThems" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 col-lg-6">
+                            <input type="button" class="form-control" value="Delete Sub-Theme" onclick="Delete(${div.id})" />
+                        </div>
+                    </div>`;
+        form.appendChild(div);
+    };
+</script>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
