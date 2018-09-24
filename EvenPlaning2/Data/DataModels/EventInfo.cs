@@ -18,7 +18,9 @@ namespace EvenPlaning2.Data.DataModels
 
         public string DressCode { get; set; }
 
-        public List<ApplicationUser> Participants { get; set; }
+        public int CountOfPartesipantes { get; set; }
+
+        public int MaxCountOfPartesipantes { get; set; }
 
         public string EventModelId { get; set; }
 

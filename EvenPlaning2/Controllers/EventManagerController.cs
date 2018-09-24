@@ -6,97 +6,143 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using EvenPlaning2.Data;
 using EvenPlaning2.Data.DataModels;
+using EvenPlaning2.Models.EventViewModels;
+using Microsoft.AspNetCore.Identity;
+using EvenPlaning2.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EvenPlaning2.Controllers
 {
     public class EventManagerController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private ApplicationDbContext  db { get; set; }
-        public EventManagerController(ApplicationDbContext db)
+        public EventManagerController(ApplicationDbContext db,
+            UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
             this.db = db;
         }
         // GET: EventManager
         public ActionResult Index()
         {
-            return View("Index",db.EventModel.Select(e=>e).OrderBy(p=>p.EventInfo.DateEvent).ToList());
+            var model = db.EventModel
+                .Include(c => c.EventInfo)
+                    .Include(g => g.SubThems)
+                    .Include(u => u.applicationUser).Select(p => new IndexEventViewModel()
+                    {
+                        Name = p.Name,
+                        Id = p.Id,
+                        MainThem = p.MainTheme,
+                        EvenDate = p.EventInfo.DateEvent,
+                        SignedUp = p.EventInfo.CountOfPartesipantes,
+                        MaxPartesipantes = p.EventInfo.MaxCountOfPartesipantes
+            }).ToList();
+            return View("Index",model);
         }
 
         // GET: EventManager/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(string id)
         {
-            return View();
+            var EventFromDb = db.EventModel
+                .Include(s=>s.SubThems)
+                .Include(i=>i.EventInfo)
+                .Include(u=>u.applicationUser)
+                .SingleOrDefault(p => p.Id == id);
+
+           
+
+            return View("Details",EventFromDb);
         }
 
         // GET: EventManager/Create
+        
         public ActionResult Create()
         {
-            return View();
+            return View("Create");
         }
 
         // POST: EventManager/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EventModel model)
+        public ActionResult Create(EventModel model,List<string> SubThems)
         {
             try
             {
                 // TODO: Add insert logic here
-               
+                model.SubThems = SubThems.Select(p=>new SubThem() { SubThemValue=p}).ToList();
+                model.applicationUser = _userManager.GetUserAsync(User).Result;
                 db.EventModel.Add(model);
                 db.SaveChanges();
+              
 
-                return RedirectToAction(nameof(Index));
+                return View("Index");
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                return View("Error");
             }
         }
-
-        // GET: EventManager/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: EventManager/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public string Enroll(string id)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                var curEvent = db.EventModel
+                        .Include(c => c.EventInfo)
+                        .Include(g => g.SubThems)
+                        .Include(u => u.applicationUser)
+                    .SingleOrDefault(p => p.Id == id);
+                curEvent.EventInfo.CountOfPartesipantes += 1;
+                db.SaveChanges();
+                return "Dud";
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+        public bool AnEnroll(string id)
+        {
+            try
+            {
+                var curEvent = db.EventModel
+                        .Include(c => c.EventInfo)
+                        .Include(g => g.SubThems)
+                        .Include(u => u.applicationUser)
+                    .SingleOrDefault(p => p.Id == id);
+                curEvent.EventInfo.CountOfPartesipantes -=1;
+                db.SaveChanges();
+                return true;
             }
             catch
             {
-                return View();
+                return false;
             }
         }
 
-        // GET: EventManager/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
         // POST: EventManager/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(string id)
         {
             try
             {
                 // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
+                var parent = db.EventModel
+                    .Include(c=>c.EventInfo)
+                    .Include(g=>g.SubThems)
+                    .Include(u=>u.applicationUser)
+                    .SingleOrDefault(p => p.Id == id);
+                db.EventModel.Remove(parent);
+                db.SaveChanges();
+                return RedirectPermanent("Index");
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                return View("Error",new ErrorViewModel() { RequestId=ex.Message});
             }
         }
     }

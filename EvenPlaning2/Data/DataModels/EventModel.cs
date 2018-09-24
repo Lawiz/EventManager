@@ -15,7 +15,7 @@ namespace EvenPlaning2.Data.DataModels
         public string Id { get; set; }
         [Required]
         public string Name { get; set; }
-
+        [Required]
         public string MainTheme { get; set; }
         [Column("Creator")]
         public ApplicationUser applicationUser { get; set; }
